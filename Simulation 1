@@ -1,19 +1,47 @@
 ## Replicate methods from Barrett 2019 paper on adaptive vs maladaptive social learning with HIREC
 
 ## define variables
-c = 0 ## cost of individual learning relative to b
-b = 0 ## benefit of adaptive behavior
-s = 0 ## proportion of innovations
-u = 0 ## rate of environmental change
+c = 1 ## cost of individual learning relative to b
+b = 3 ## benefit of adaptive behavior
+s = 0.8 ## proportion of innovations
+u = 0.5 ## rate of environmental change, starts out stable (0.5)
 p = 0 ## frequency of social learners for first phenotype
 p2 = 1-p ## frequency of social learners at second phenotype
-w0 = 0 ## baseline fitness
-Q = 0 ## proportion of behaviors copied from the previous generation 
+w0 = 1 ## baseline fitness
+Q = rep(0, 100) ## frequency of adaptive behavior
 t = 1 ## time step
 
 ## to calculate the fitness based on cost of innovation and whether that innovation was adaptive
 if(b > c){
-  W = w0 + sb - c
+  WI = w0 + sb - c
 }
 
 ## transmission of phenotypes from one generation to the next
+Q[t] = (1-u)*((1-p)*s + p*Q[t-1])
+
+## fitness of social learners copied from previous generation
+WS[t] = w0 + Q[t]*b
+
+## genetic steady state?
+WS = WI
+Q[t] = Q[t-1]
+
+## initialize with p = ph... set as condition inside loop?
+if(ph = p){
+  ph = (1-usb/c)/(1-u)
+}
+
+if(Qh = Q[t]){
+  Qh = s-(c/b)
+}
+
+## social learners invade if???
+if(p = 0){
+  u < c/sb
+}
+## individual learners invade if???
+if(p = 1){
+  sb > c
+}
+
+
