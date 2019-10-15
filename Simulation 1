@@ -5,11 +5,11 @@ c = 1 ## cost of individual learning relative to b
 b = 3 ## benefit of adaptive behavior
 s = 0.8 ## proportion of innovations
 u = 0.5 ## rate of environmental change, starts out stable (0.5)
-p = 0 ## frequency of social learners for first phenotype
-p2 = 1-p ## frequency of social learners at second phenotype
+p = rep(0, 100) ## frequency of social learners for first phenotype
+##p2 = 1-p ## frequency of social learners at second phenotype
 w0 = 1 ## baseline fitness
 Q = rep(0, 100) ## frequency of adaptive behavior
-t = 1 ## time step
+t = seq(1, 100) ## time step
 
 ## to calculate the fitness based on cost of innovation and whether that innovation was adaptive
 if(b > c){
@@ -44,4 +44,15 @@ if(p = 1){
   sb > c
 }
 
+## Let's try to start out simple
+ph = (1-u*s*b/c)/(1-u)
 
+for(t in 1:length(Q)){
+  if(t = 1){
+    p = ph
+    Q[t] = 0
+  }
+  if(t > 1){
+    Q[t] = (1-u)*((1-p)*s + p*Q[t-1])
+  }
+}
