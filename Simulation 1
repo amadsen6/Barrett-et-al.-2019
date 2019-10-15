@@ -1,0 +1,19 @@
+## Replicate methods from Barrett 2019 paper on adaptive vs maladaptive social learning with HIREC
+
+## define variables
+c = 0 ## cost of individual learning relative to b
+b = 0 ## benefit of adaptive behavior
+s = 0 ## proportion of innovations
+u = 0 ## rate of environmental change
+p = 0 ## frequency of social learners for first phenotype
+p2 = 1-p ## frequency of social learners at second phenotype
+w0 = 0 ## baseline fitness
+Q = 0 ## proportion of behaviors copied from the previous generation 
+t = 1 ## time step
+
+## to calculate the fitness based on cost of innovation and whether that innovation was adaptive
+if(b > c){
+  W = w0 + sb - c
+}
+
+## transmission of phenotypes from one generation to the next
