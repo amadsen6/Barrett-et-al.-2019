@@ -31,40 +31,87 @@ for(t in 1:length(timesteps)){
 plot(y = p, x = c(1:101), ylim=c(-0.05,1.09) , "l", col= "pink" , ylab="frequency of social learners (p)" , cex.lab=1.4)
 
 
+## Sensitivity analysis
+#####
+## Vary c from 0:100
+### Unless c = 0, frequency of social learners converges on oscillating frequency between 0.4 and 0.75. c seems to only affect the initialization sequence, making the frequency vary to both extremes before settling on the oscillation pattern. 
+timesteps = seq(1, 100) ## time step
+c = 100000 ## cost of individual learning relative to b
+b = 3 ## benefit of adaptive behavior
+s = 0.8 ## proportion of innovations
+U = 0.5 ## rate of environmental change, starts out stable (0.5)
+p = rep(0, length(timesteps)+1) ## frequency of social learners
+##p2 = 1-p ## frequency of individual learners
+w0 = 1 ## baseline fitness
+WI = rep(0, length(timesteps)) ## fitness of individual learners at each time step
+WS = rep(0, length(timesteps)) ## fitness of social learners at each time step 
+Wpop = rep(0, length(timesteps)) ## fitness of population at each time step
+u = rep(0, length(timesteps))
+Q = rep(0, length(timesteps)+1) ## frequency of adaptive behavior
+ph = (1-U*s*b/c)/(1-U) #frequency of social learners; ph (p hat) is the steady state of the frequency of adaptive behaviors
+
+## initialize parameters
+p[1] = ph
+Q[1] = 0 ## Qh?
+u[1] <- 0
+u[3] <- u[9] <- u[32] <- u[53]<- u[64]<- u[66]<- u[70]<- u[73] <- u[81] <- u[99] <- 1
+
+for(t in 1:length(timesteps)){
+  WS[t] = w0 + b*Q[t]
+  Q[t+1] = (1-u[t])*((1-p[t])*s + p[t]*Q[t])
+  p[t+1] = p[t]*WS[t]/(p[t]*WS[t] + (1-p[t]*WI))
+  #u[t+1] <- rbinom(n=1,prob=U,size=1) #sample environment changing in next gen, if 0 all SL behav maladaptive
+}
+
+plot(y = p, x = c(1:101), ylim=c(-0.05,1.09) , "l", col= "blue" , ylab="frequency of social learners (p)" , cex.lab=1.4)
+
+
+#######
+## vary b from 0:100
+## as b increases, the upper bound of the oscillation increases, shifting the mean frequency of social learners upwards
+
+######
+## vary s from 0:1
+## again, as s increases, the variance in frequency increases and the mean is shifted upwards until s = 1, then there are no more social learners because everyone is an innovator.
+
+######
+
+
+
 ##############
 #### stuff
-## to calculate the fitness based on cost of innovation and whether that innovation was adaptive
-if(b > c){
-  WI = w0 + s*b - c
-}
-
-## transmission of phenotypes from one generation to the next
-Q[t] = (1-u)*((1-p)*s + p*Q[t-1])
-
-## fitness of social learners copied from previous generation
-WS[t] = w0 + Q[t]*b
-
-## genetic steady state?
-WS = WI
-Q[t] = Q[t-1]
-
-## initialize with p = ph... set as condition inside loop?
-if(p = ph){
-  #do something
-}
-
-if(Qh = Q[t]){
-  Qh = s-(c/b)
-}
-
-## social learners invade if???
-if(p = 0){
-  u < c/s*b
-}
-## individual learners invade if???
-if(p = 1){
-  sb > c
-}
-
-## After HIREC
-Q = (1-p)*s
+# ## to calculate the fitness based on cost of innovation and whether that innovation was adaptive
+# if(b > c){
+#   WI = w0 + s*b - c
+# }
+# 
+# ## transmission of phenotypes from one generation to the next
+# Q[t] = (1-u)*((1-p)*s + p*Q[t-1])
+# 
+# ## fitness of social learners copied from previous generation
+# WS[t] = w0 + Q[t]*b
+# 
+# ## genetic steady state?
+# WS = WI
+# Q[t] = Q[t-1]
+# 
+# ## initialize with p = ph... set as condition inside loop?
+# if(p = ph){
+#   #do something
+# }
+# 
+# if(Qh = Q[t]){
+#   Qh = s-(c/b)
+# }
+# 
+# ## social learners invade if???
+# if(p = 0){
+#   u < c/s*b
+# }
+# ## individual learners invade if???
+# if(p = 1){
+#   sb > c
+# }
+# 
+# ## After HIREC
+# Q = (1-p)*s
